@@ -1,25 +1,18 @@
 (in-package :polisher)
 
 
-(defun symbol-to-operator (symbol)
-  (find-if #'(lambda (item)
-                  (eq symbol
-                      (slot-value item 'symbol)))
-           *operator-list*))
-           
-
-(defun parse-syntax-list (formula)
+(defun transform-into-sexp (formula)
   (if (should-be-peeled formula)
       (let ((peeled (subseq formula 1 (- (length formula) 1))))
         (if (null peeled)
             (error "Invalid paren")
-            (parse-syntax-list peeled)))
+            (transform-into-sexp peeled)))
       (let ((div-index (find-split-point formula)))
         (if (< div-index 0) ;; formula contains no operators
             (parse-value-or-function formula)
             (list (slot-value (nth div-index formula) 'function)
-                  (parse-syntax-list (subseq formula 0 div-index))
-                  (parse-syntax-list (nthcdr (+ 1 div-index) formula)))))))
+                  (transform-into-sexp (subseq formula 0 div-index))
+                  (transform-into-sexp (nthcdr (+ 1 div-index) formula)))))))
 
 
 (defun should-be-peeled (formula)
@@ -78,7 +71,7 @@
               ((eq token *separator*) (if (null buffer)
                                         (error "Invalid argument")
                                         (progn
-                                          (push (parse-syntax-list (reverse buffer)) children)
+                                          (push (transform-into-sexp (reverse buffer)) children)
                                           (setf buffer nil))))
               ((eq token *left-paren*) (progn
                                          (incf paren-depth)
@@ -89,7 +82,7 @@
                                           (if (= paren-depth 0)
                                               (progn
                                                 (when buffer
-                                                  (push (parse-syntax-list (reverse buffer)) children))
+                                                  (push (transform-into-sexp (reverse buffer)) children))
                                                 (return))
                                               (push token buffer))))
               (t (push token buffer)))
@@ -99,7 +92,7 @@
 
 
 (defun tester (list)
-  (parse-syntax-list (mapcar #'(lambda (item)
+  (transform-into-sexp (mapcar #'(lambda (item)
                                  (let ((conved (symbol-to-operator item)))
                                    (if (null conved)
                                        item
