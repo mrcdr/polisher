@@ -64,10 +64,12 @@
           (eq (cadr formula) *left-paren*)) ;; function
      (let ((children nil))
        (loop
-         for token in (cdr formula)
-         with paren-depth = 0
+         for token in (cddr formula)         
+         for i from 0
+         with last-index = (- (length (cddr formula)) 1)
+         with paren-depth = 1
          with buffer = nil
-         do (cond 
+         do (cond
               ((eq token *separator*) (if (null buffer)
                                         (error "Invalid argument")
                                         (progn
@@ -75,12 +77,13 @@
                                           (setf buffer nil))))
               ((eq token *left-paren*) (progn
                                          (incf paren-depth)
-                                         (when (> paren-depth 1)
-                                           (push token buffer))))
+                                         (push token buffer)))
               ((eq token *right-paren*) (progn
                                           (decf paren-depth)
                                           (if (= paren-depth 0)
                                               (progn
+                                                (when (/= i last-index)
+                                                  (error "Invalid sytax"))
                                                 (when buffer
                                                   (push (transform-into-sexp (reverse buffer)) children))
                                                 (return))
