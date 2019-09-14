@@ -20,7 +20,7 @@
       (if group-index
           (- (aref e-group group-index) (aref s-group group-index))
           (- end start)))))
-          
+
 
 (defun create-operator-regex ()
   (format nil "~{~a~^|~}" (mapcar
@@ -46,6 +46,14 @@
             do (acond
                 ((match-length "^\\s+" rest-str)
                  (setf rest-str (subseq rest-str it))) ; remove spaces
+
+                ((match-length "^#" rest-str) ;; parse reader macro
+                 (declare (ignore it))
+                 (multiple-value-bind (read-form position)
+                     (read-from-string rest-str)
+                   (push read-form tokenized)
+                   (setf rest-str (subseq rest-str position))
+                   (setf sign-allowed nil)))
                 
                 ((and sign-allowed (match-length signed-value-regex rest-str))
                  (progn

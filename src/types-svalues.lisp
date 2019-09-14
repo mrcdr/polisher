@@ -1,4 +1,3 @@
-(in-package :cl-user)
 (defpackage polisher
   (:use cl))
 (in-package :polisher)
