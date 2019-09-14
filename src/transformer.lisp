@@ -94,10 +94,5 @@
     (t (error "Invalid formula"))))
 
 
-(defun tester (list)
-  (transform-into-sexp (mapcar #'(lambda (item)
-                                 (let ((conved (symbol-to-operator item)))
-                                   (if (null conved)
-                                       item
-                                       conved)))
-                             list)))
+(defun infix-to-sexp (formula-str)
+  (transform-into-sexp (tokenize formula-str)))
