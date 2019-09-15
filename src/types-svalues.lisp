@@ -17,17 +17,10 @@
 
 
 (defmethod print-object ((this operator) stream)
-  (format stream "~a" (slot-value this 'symbol)))
+  (format stream "op~a" (slot-value this 'symbol)))
 
 
-(defparameter *operator-list*
-  (list
-   (make-instance 'operator :symbol '+ :priority 1)
-   (make-instance 'operator :symbol '- :priority 1)
-   (make-instance 'operator :symbol '* :priority 2)
-   (make-instance 'operator :symbol '/ :priority 2)
-   (make-instance 'operator :symbol '^ :function 'expt :priority 3 :left-associative nil)
-   ))
+(defparameter *operator-list* nil)
 
 
 (defparameter *left-paren* '{)
@@ -37,8 +30,30 @@
 (defparameter *max-priority* 1000)
 
 
+(defun add-operator (op)
+  (unless (typep op 'operator)
+    (error "Argument must be operator"))
+  (remove-if #'(lambda (x) (eq (slot-value op 'symbol) (slot-value x 'symbol)))
+             *operator-list*)
+  (push op *operator-list*)
+  (setf *operator-list*
+        (sort *operator-list* #'(lambda (x y)
+                                  (>= (length (string (slot-value x 'symbol)))
+                                      (length (string (slot-value y 'symbol))))))))
+
+(add-operator (make-instance 'operator :symbol '+ :priority 1))
+(add-operator (make-instance 'operator :symbol '- :priority 1))
+(add-operator (make-instance 'operator :symbol '* :priority 2))
+(add-operator (make-instance 'operator :symbol '/ :priority 2))
+(add-operator (make-instance 'operator :symbol '** :function 'expt :priority 3 :left-associative nil))
+; Here used a little trick; the symbol ** is interned in CL package as a previously evaluated result.
+
+; (add-operator (make-instance 'operator :symbol '^ :function 'expt :priority 3 :left-associative nil))
+; To enable this, symbol ^ must be exported by package definition.
+
+
 (defun symbol-to-operator (symbol)
   (find-if #'(lambda (item)
-                  (eq symbol
+               (equal symbol
                       (slot-value item 'symbol)))
            *operator-list*))

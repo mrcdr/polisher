@@ -37,8 +37,8 @@
          (operator-regex-tmp (create-operator-regex))
          (operator-regex (format nil "^(~a)" operator-regex-tmp))
          (separator-regex (format nil "~a|\\(|\\)|," operator-regex-tmp))
-         (signed-symbol-regex (format nil "^[+-](.+?)(?:~a|\\z)" separator-regex)) ;; \z is required to
-         (unsigned-symbol-regex (format nil "^(.+?)(?:~a|\\z)" separator-regex)))  ;; terminate non-greedy match
+         (signed-symbol-regex (format nil "^[+-](.+?)(?:~a|\\s|\\z)" separator-regex)) ;; \z is required to
+         (unsigned-symbol-regex (format nil "^(.+?)(?:~a|\\s|\\z)" separator-regex)))  ;; terminate non-greedy match
     (let ((tokenized nil))
       (loop with rest-str = formula-str
             with sign-allowed = t
@@ -98,7 +98,7 @@
                      (push *left-paren* tokenized)
                      (push -1 tokenized)
                      (push *right-paren* tokenized)
-                     (push '* tokenized))
+                     (push (symbol-to-operator '*) tokenized))
                    (push (read-from-string (subseq rest-str 1 (+ 1 it))) tokenized) ; skip sign
                    (setf rest-str (subseq rest-str (+ 1 it)))
                    (setf sign-allowed nil)))
