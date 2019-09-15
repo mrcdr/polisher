@@ -5,7 +5,4 @@
            :tokenize
            :transform-into-sexp
            :symbol-to-operator
-           :operator
-           :*left-paren*
-           :*right-paren*
-           :*separator*))
+           :operator))

@@ -1,5 +1,9 @@
 (in-package :polisher.test)
 
+(defparameter *left-paren* polisher::*left-paren*)
+(defparameter *right-paren* polisher::*right-paren*)
+(defparameter *separator* polisher::*separator*)
+
 
 (defun map-op-object (list)
   (mapcar #'(lambda (item)
