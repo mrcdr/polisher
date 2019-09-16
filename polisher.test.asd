@@ -8,5 +8,4 @@
                 :serial t
                 :components ((:file "test"))))
   :perform (test-op (o c)
-             (let ((*package* (find-package :polisher.test)))
-               (symbol-call :1am :run))))
+             (symbol-call :polisher.test :run-test)))

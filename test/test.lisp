@@ -60,3 +60,8 @@
   (signals simple-error (infix-to-sexp "x y z") :test #'equal)
   (signals simple-error (infix-to-sexp "sin    +") :test #'equal)
   (signals simple-error (infix-to-sexp "1ee2+3")) :test #'equal)
+
+
+(defun run-test ()
+  (let ((*package* (find-package :polisher.test)))
+    (run)))
