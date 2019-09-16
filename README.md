@@ -1,5 +1,4 @@
 # Polisher
-
 Infix notation to S-expression (Polish notation) translator for Common Lisp
 
 ## Overview
@@ -38,9 +37,14 @@ Formulae inside reader macro #i{ ... } are interpreted as infix notation.
 ;=> (+ 1 (* 2 3))
 ```
 
+## Installation
+1. Clone or download the latest version from [GitHub](https://github.com/mrcdr/polisher).
+2. Place the directory where your ASDF system can find.
+3. Run `(asdf:load-system :polisher)`.
+
 ## Requirements
 - [cl-ppcre](https://edicl.github.io/cl-ppcre/)
-- [1am](https://github.com/lmj/1am) (Only if you want to run test suite)
+- [1am](https://github.com/lmj/1am) (Only if you want to run tests)
 
 
 ## Default operators
@@ -75,6 +79,9 @@ For example, when `op1` is left-associative and `op2` is right-associative,
 
 When you add your own operator, be careful of which package
 its symbol is interned in.
+
+## License
+[MIT](https://github.com/mrcdr/polisher/blob/master/LICENSE)
 
 ## Author
 [mrcdr](https://github.com/mrcdr)
