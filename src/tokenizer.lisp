@@ -31,7 +31,6 @@
 
 
 (defun tokenize (formula-str)
-  (declare (optimize (debug 3)))
   (let* ((signed-value-regex "^[+-]?[0-9]+(?:\\.[0-9]*)?(?:[dDeEfFlLsS][+-]?[0-9]+)?")
          (unsigned-value-regex "^[0-9]+(?:\\.[0-9]*)?(?:[dDeEfFlLsS][+-]?[0-9]+)?")
          (operator-regex-tmp (create-operator-regex))
