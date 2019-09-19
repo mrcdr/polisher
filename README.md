@@ -67,7 +67,7 @@ Following operators are defined by default:
                                       :priority 3
                                       :left-associative nil))
 
-2^2^3
+#i{2^2^3}
 ;=> 256
 ```
 
