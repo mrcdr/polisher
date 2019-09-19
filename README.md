@@ -2,10 +2,16 @@
 Infix notation to S-expression (Polish notation) translator for Common Lisp
 
 ## Overview
-Formulae inside reader macro #i{ ... } are interpreted as infix notation.
+Formulae inside the reader macro `#i{ ... }` are interpreted as infix notation.
+If you don't want to use it, the macro `polish` is available instead.
 
 ```common-lisp
+(polisher:activate-infix-syntax)  ; Activate #i{ ... } reader macro
+
 #i{1+2*3}
+;=> 7
+
+(polisher:polish "1+2*3") ; Exactly the same as the above one
 ;=> 7
 
 #i{1 + 2*3} ; Spaces can be inserted anywhere
@@ -17,9 +23,6 @@ Formulae inside reader macro #i{ ... } are interpreted as infix notation.
 #i{2**2**3} ; identical to 2**(2**3), not (2**2)**3
 ;=> 256
 
-#i{cos(1.0d0)**2 + sin(1.0d0)**2}
-;=> 1.0d0
-
 #i{atan(1.0d0, 1.0d0)}
 ;=> 0.7853981633974483d0
 
@@ -30,11 +33,8 @@ Formulae inside reader macro #i{ ... } are interpreted as infix notation.
 #i{2*#c(1 2)+3}
 ;=> #C(5 4)
 
-#i{#b101 +3} ; Space is required after #b101
+#i{#b101 +3} ; Some spaces are needed after #b101
 ;=> 8
-
-(macroexpand-1 '#i{1+2*3})
-;=> (+ 1 (* 2 3))
 ```
 
 ## Installation
@@ -67,8 +67,8 @@ Following operators are defined by default:
                                       :priority 3
                                       :left-associative nil))
 
-#i{cos(1.0d0)^2 + sin(1.0d0)^2}
-;=> 1.0d0
+2^2^3
+;=> 256
 ```
 
 Note that if there are left-associative operators and right-associative operators
