@@ -1,6 +1,7 @@
 (asdf:defsystem :polisher
   :description "Infix to S-expression translator"
   :author "mrcdr"
+  :license "MIT"
   :version "0.1"
   :depends-on (:cl-ppcre)
   :serial t

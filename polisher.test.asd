@@ -1,6 +1,7 @@
 (asdf:defsystem :polisher.test
   :description "Test suite for Polisher"
   :author "mrcdr"
+  :license "MIT"
   :depends-on (:polisher :1am)
   :serial t
   :components ((:file "package.test")
