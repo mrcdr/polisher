@@ -1,8 +1,6 @@
 (defpackage polisher
   (:use :cl)
-  (:export :infix-to-sexp
+  (:export :polish
            :add-operator
-           :tokenize
-           :transform-into-sexp
-           :symbol-to-operator
-           :operator))
+           :operator
+           :activate-infix-syntax))

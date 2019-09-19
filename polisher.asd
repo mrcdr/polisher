@@ -9,5 +9,6 @@
                 :serial t
                 :components ((:file "types-svalues")
                              (:file "tokenizer")
-                             (:file "transformer"))))
+                             (:file "transformer")
+                             (:file "interface"))))
   :in-order-to ((test-op (test-op polisher.test))))

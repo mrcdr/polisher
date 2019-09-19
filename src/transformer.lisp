@@ -92,28 +92,3 @@
          finally (error "Unreachable point"))
        (cons (car formula) (reverse children))))
     (t (error "Invalid formula"))))
-
-
-(defun infix-to-sexp (formula-str)
-  (transform-into-sexp (tokenize formula-str)))
-
-
-;; Reader macro
-(defun read-formula (stream end-char)
-  (coerce (loop for c = (read-char stream)
-                if (char= c end-char) do (loop-finish)
-                collect c)
-          'string))
-
-
-(when (get-dispatch-macro-character #\# #\i)
-  (warn "Dispatch macro character #i has been overwritten."))
-
-
-(set-dispatch-macro-character #\# #\i
-  #'(lambda (stream disp-char sub-char)
-      (declare (ignore disp-char sub-char))
-      (let ((first-char (read-char stream)))
-        (when (char/= first-char #\{)
-          (error "Infix must be like #i{...}"))
-        (infix-to-sexp (read-formula stream #\})))))
