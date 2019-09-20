@@ -1,5 +1,5 @@
 (asdf:defsystem :polisher
-  :description "Infix to S-expression translator"
+  :description "Infix notation to S-expression translator"
   :author "mrcdr"
   :license "MIT"
   :version "0.1"
