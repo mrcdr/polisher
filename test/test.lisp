@@ -14,6 +14,7 @@
           list))
 
 (add-operator (make-instance 'operator :symbol '^ :function 'expt :priority 3 :left-associative nil))
+(add-operator (make-instance 'operator :symbol '? :function 'mod :priority 10000))
 
 (test tokenize-test
   (is (tree-equal (polisher::tokenize "1+1") (map-op-object '(1 + 1)) :test #'equal))
@@ -46,6 +47,7 @@
   (is (tree-equal (polisher::infix-to-sexp "1*(2*3)") '(* 1 (* 2 3)) :test #'equal))
   (is (tree-equal (polisher::infix-to-sexp "1*2**3**4*5+6") '(+ (* (* 1 (expt 2 (expt 3 4))) 5) 6) :test #'equal))
   (is (tree-equal (polisher::infix-to-sexp "1*2^3^4*5+6") '(+ (* (* 1 (expt 2 (expt 3 4))) 5) 6) :test #'equal))
+  (is (tree-equal (polisher::infix-to-sexp "1+2*3?4*5") '(+ 1 (* (* 2 (mod 3 4)) 5)) :test #'equal))
   (is (tree-equal (polisher::infix-to-sexp "1e5+#C(2 4)") '(+ 1e5 #C(2 4)) :test #'equal))
   (is (tree-equal (polisher::infix-to-sexp "sin(#b1011 +5)") '(sin (+ #b1011 5)) :test #'equal)) ; space required
   )

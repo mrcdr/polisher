@@ -28,6 +28,8 @@
 (defparameter *separator* '_)
 
 (defparameter *max-priority* 1000)
+; This value will be automatically increased
+; when a higher prior operator is registered.
 
 
 (defun add-operator (op)
@@ -36,6 +38,8 @@
   (remove-if #'(lambda (x) (eq (slot-value op 'symbol) (slot-value x 'symbol)))
              *operator-list*)
   (push op *operator-list*)
+  (when (> (slot-value op 'priority) *max-priority*)
+    (setf *max-priority* (slot-value op 'priority)))
   (setf *operator-list*
         (sort *operator-list* #'(lambda (x y)
                                   (>= (length (string (slot-value x 'symbol)))

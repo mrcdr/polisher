@@ -34,7 +34,7 @@
 (defun find-split-point (formula)
   (loop for i from 0
         for token in formula
-        with max-priority = *max-priority*
+        with max-priority = (+ *max-priority* 1)
         with index = -1
         with paren-depth = 0
         do (cond
