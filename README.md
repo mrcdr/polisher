@@ -85,7 +85,7 @@ its symbol is interned in.
 
 ## Restrictions
 ### Symbols with vertical bars
-Symbols whose symbol-name sandwiched in vertical vars (e.g. `|ab de|`) can't be used.
+Symbols whose symbol-name sandwiched in vertical bars (e.g. `|ab de|`) can't be used.
 This is because someone may want to use a vertical bar as the logical OR operator.
 
 ### Double-quoting is necessary?
