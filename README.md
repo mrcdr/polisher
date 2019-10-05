@@ -84,7 +84,7 @@ When you add your own operator, be careful of which package
 its symbol is interned in.
 
 ## Restrictions
-### Vertical bars
+### Symbols with vertical bars
 Symbols whose symbol-name sandwiched in vertical vars (e.g. `|ab de|`) can't be used.
 This is because someone may want to use a vertical bar as the logical OR operator.
 
