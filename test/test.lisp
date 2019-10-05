@@ -38,6 +38,12 @@
               (map-op-object `(sin ,*left-paren* ,*left-paren* -1 ,*right-paren* * abc
                                    ,*separator* z ,*right-paren*))
               :test #'equal))
+  (is (tree-equal (polisher::tokenize "1+\"*gamma*\"*\"+euler-constant+\"")
+                  (map-op-object `(1 + *gamma* * +euler-constant+))
+                  :test #'equal))
+  (is (tree-equal (polisher::tokenize "1+\"long-name-symbol\"")
+                  (map-op-object `(1 + long-name-symbol))
+                  :test #'equal))
   )
 
 (test transform-test
@@ -53,15 +59,16 @@
   )
 
 (test invalid-formula-test
-  (signals simple-error (polisher::infix-to-sexp "") :test #'equal)
-  (signals simple-error (polisher::infix-to-sexp "1+") :test #'equal)
-  (signals simple-error (polisher::infix-to-sexp "1++2") :test #'equal)
-  (signals simple-error (polisher::infix-to-sexp "sin(") :test #'equal)
-  (signals simple-error (polisher::infix-to-sexp "(1)(2)") :test #'equal)
-  (signals simple-error (polisher::infix-to-sexp "()") :test #'equal)
-  (signals simple-error (polisher::infix-to-sexp "x y z") :test #'equal)
-  (signals simple-error (polisher::infix-to-sexp "sin    +") :test #'equal)
-  (signals simple-error (polisher::infix-to-sexp "1ee2+3")) :test #'equal)
+  (signals simple-error (polisher::infix-to-sexp ""))
+  (signals simple-error (polisher::infix-to-sexp "1+"))
+  (signals simple-error (polisher::infix-to-sexp "1++2"))
+  (signals simple-error (polisher::infix-to-sexp "sin("))
+  (signals simple-error (polisher::infix-to-sexp "(1)(2)"))
+  (signals simple-error (polisher::infix-to-sexp "()"))
+  (signals simple-error (polisher::infix-to-sexp "x y z"))
+  (signals simple-error (polisher::infix-to-sexp "sin    +"))
+  (signals simple-error (polisher::infix-to-sexp "1ee2+3"))
+  (signals simple-error (polisher::infix-to-sexp "1+\"*gamma*\"*\"+euler-constant+")))
 
 
 (defun run-test ()

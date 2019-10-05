@@ -29,10 +29,18 @@
                                 (symbol-name (slot-value x 'symbol))))
                            *operator-list*)))
 
+(defun read-safely (str)
+  (multiple-value-bind (read position) (read-from-string str)
+    (when (/= (length str) position)
+      (error (format nil "Illegal read: trying to read \"~a\", got ~a" str (string read))))
+    read))
+
 
 (defun tokenize (formula-str)
   (let* ((signed-value-regex "^[+-]?[0-9]+(?:\\.[0-9]*)?(?:[dDeEfFlLsS][+-]?[0-9]+)?")
          (unsigned-value-regex "^[0-9]+(?:\\.[0-9]*)?(?:[dDeEfFlLsS][+-]?[0-9]+)?")
+         (signed-double-quote-regex "^[+-]\".*?\"")
+         (unsigned-double-quote-regex "^\".*?\"")
          (operator-regex-tmp (create-operator-regex))
          (operator-regex (format nil "^(~a)" operator-regex-tmp))
          (separator-regex (format nil "~a|\\(|\\)|," operator-regex-tmp))
@@ -52,19 +60,42 @@
                      (read-from-string rest-str)
                    (push read-form tokenized)
                    (setf rest-str (subseq rest-str position))
-                   (setf sign-allowed nil)))
+                   (setf sign-allowed nil)))                 
                 
                 ((and sign-allowed (match-length signed-value-regex rest-str))
                  (progn
-                   (push (read-from-string (subseq rest-str 0 it)) tokenized)
+                   (push (read-safely (subseq rest-str 0 it)) tokenized)
                    (setf rest-str (subseq rest-str it))
                    (setf sign-allowed nil)))
                 
                 ((match-length unsigned-value-regex rest-str)
                  (progn
-                   (push (read-from-string (subseq rest-str 0 it)) tokenized)
+                   (push (read-safely (subseq rest-str 0 it)) tokenized)
                    (setf rest-str (subseq rest-str it))
                    (setf sign-allowed nil)))
+
+                ((and sign-allowed (match-length signed-double-quote-regex rest-str))
+                 (progn
+                   (when (char= (char rest-str 0) #\-)
+                     ;; When double-quoted symbol with negative sign, insert "(-1)*"
+                     (push *left-paren* tokenized)
+                     (push -1 tokenized)
+                     (push *right-paren* tokenized)
+                     (push (symbol-to-operator '*) tokenized))
+                   (push (read-safely (subseq rest-str 2 (- it 1))) tokenized) ; remove sign and double quotes
+                   (setf rest-str (subseq rest-str it))
+                   (setf sign-allowed nil)))
+
+                ((and (not sign-allowed) (match-length unsigned-double-quote-regex rest-str))
+                 (progn
+                   (push (read-safely (subseq rest-str 1 (- it 1))) tokenized) ; remove double quotes
+                   (setf rest-str (subseq rest-str it))
+                   (setf sign-allowed nil)))
+
+                ((cl-ppcre:scan "^\"" rest-str)
+                 ;; Reaching here through the above conditions means unmatched double quote existing
+                 (declare (ignore it))
+                 (error "Unmatched double quote"))
 
                 ((and (not sign-allowed) (match-length operator-regex rest-str 0))
                  (progn
@@ -98,13 +129,13 @@
                      (push -1 tokenized)
                      (push *right-paren* tokenized)
                      (push (symbol-to-operator '*) tokenized))
-                   (push (read-from-string (subseq rest-str 1 (+ 1 it))) tokenized) ; skip sign
+                   (push (read-safely (subseq rest-str 1 (+ 1 it))) tokenized) ; skip sign
                    (setf rest-str (subseq rest-str (+ 1 it)))
                    (setf sign-allowed nil)))
                 
                 ((match-length unsigned-symbol-regex rest-str 0)
                  (progn
-                   (push (read-from-string (subseq rest-str 0 it)) tokenized)
+                   (push (read-safely (subseq rest-str 0 it)) tokenized)
                    (setf rest-str (subseq rest-str it))
                    (setf sign-allowed nil)))
                 
