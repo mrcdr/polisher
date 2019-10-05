@@ -20,7 +20,7 @@ If you don't want to use it, the macro `polish` is available instead.
 #i{2*3/4}
 ;=> 3/2
 
-#i{2**2**3} ; identical to 2**(2**3), not (2**2)**3
+#i{2**2**3} ; Identical to 2**(2**3), not (2**2)**3
 ;=> 256
 
 #i{atan(1.0d0, 1.0d0)}
@@ -29,6 +29,10 @@ If you don't want to use it, the macro `polish` is available instead.
 (flet ((add1 (x) (+ x 1)))
   #i{add1(2)+3})
 ;=> 6
+
+(defparameter *some-global-value* 1.5) ; The symbol containg operator charcters
+#i{1+2*"*some-global-value*"}          ; must be double-quoted
+;=> 4.0
 
 #i{2*#c(1 2)+3}
 ;=> #C(5 4)
@@ -45,7 +49,6 @@ If you don't want to use it, the macro `polish` is available instead.
 ## Requirements
 - [cl-ppcre](https://edicl.github.io/cl-ppcre/)
 - [1am](https://github.com/lmj/1am) (Only if you want to run tests)
-
 
 ## Default operators
 Following operators are defined by default:
@@ -79,6 +82,19 @@ For example, when `op1` is left-associative and `op2` is right-associative,
 
 When you add your own operator, be careful of which package
 its symbol is interned in.
+
+## Restrictions
+### Vertical bars
+Symbols whose symbol-name sandwiched in vertical vars (e.g. `|ab de|`) can't be used.
+This is because someone may want to use a vertical bar as the logical OR operator.
+
+### Double-quoting is necessary?
+The infix formula `1+*global-symbol*` can be uniquely interpreted as `(+ 1 *global-symbol*)`,
+so double-quoting may be unnecessary.
+However in my opinion, the formula seems very weird when it appears in ALGOL-like languages;
+so I think double-quoting should be used.
+In addition, many text editors highlight double-quoted things, helping us to distinguish
+symbol-names from operators.
 
 ## License
 [MIT](https://github.com/mrcdr/polisher/blob/master/LICENSE)
