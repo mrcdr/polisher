@@ -31,7 +31,7 @@ If you don't want to use it, the macro `polish` is available instead.
 ;=> 6
 
 (defparameter *some-global-value* 1.5) ; The symbol containg operator charcters
-#i{1+2*"*some-global-value*"}          ; must be double-quoted
+#i{1 + 2 * "*some-global-value*"}      ; must be double-quoted
 ;=> 4.0
 
 #i{2*#c(1 2)+3}
