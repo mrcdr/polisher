@@ -43,14 +43,26 @@ If you don't want to use it, the macro `polish` is available instead.
 
 ## Installation
 ### Quicklisp
-If you already have [Quicklisp](https://www.quicklisp.org/beta/) client,
-just run the following:
+Currently, the bug fix at [46e644c](https://github.com/mrcdr/polisher/commit/46e644c6d0d253375d8113ffffd29ee82039eab9)
+hasn't been reflected on the Quicklisp official repository.
+So please use other installation ways bellow.
+Sorry for the inconvenience.
+
+
+~~If you already have [Quicklisp](https://www.quicklisp.org/beta/) client,
+just run the following:~~
 
 ``` common-lisp
 (ql:quickload :polisher)
 ```
 
 It will resolve [dependencies](https://github.com/mrcdr/polisher#requirements) automatically.
+
+### Github and Quicklisp
+1. Clone or download the latest version from [GitHub](https://github.com/mrcdr/polisher).
+2. In the cloned directory, run `(ql:register-local-projects)`.
+3. Now you can use `(ql:quickload :polisher)` anywhere.
+
 ### ASDF
 1. Clone or download the latest version from [GitHub](https://github.com/mrcdr/polisher).
 2. Place the directory where your ASDF system can find.
