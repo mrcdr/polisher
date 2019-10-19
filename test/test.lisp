@@ -44,6 +44,12 @@
   (is (tree-equal (polisher::tokenize "1+\"long-name-symbol\"")
                   (map-op-object `(1 + long-name-symbol))
                   :test #'equal))
+  (is (tree-equal (polisher::tokenize "1+sin(\"long-name-symbol\")")
+                  (map-op-object `(1 + sin ,*left-paren* long-name-symbol ,*right-paren*))
+                  :test #'equal))
+  (is (tree-equal (polisher::tokenize "\"*long-name-symbol*\"+2.5")
+                  (map-op-object `(*long-name-symbol* + 2.5))
+                  :test #'equal))
   )
 
 (test transform-test

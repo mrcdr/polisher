@@ -60,7 +60,7 @@
                      (read-from-string rest-str)
                    (push read-form tokenized)
                    (setf rest-str (subseq rest-str position))
-                   (setf sign-allowed nil)))                 
+                   (setf sign-allowed nil)))
                 
                 ((and sign-allowed (match-length signed-value-regex rest-str))
                  (progn
@@ -86,7 +86,7 @@
                    (setf rest-str (subseq rest-str it))
                    (setf sign-allowed nil)))
 
-                ((and (not sign-allowed) (match-length unsigned-double-quote-regex rest-str))
+                ((and (match-length unsigned-double-quote-regex rest-str))
                  (progn
                    (push (read-safely (subseq rest-str 1 (- it 1))) tokenized) ; remove double quotes
                    (setf rest-str (subseq rest-str it))
