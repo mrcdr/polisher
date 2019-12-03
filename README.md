@@ -44,7 +44,7 @@ If you don't want to use it, the macro `polish` is available instead.
 ## Installation
 ### Quicklisp
 If you already have [Quicklisp](https://www.quicklisp.org/beta/) client,
-just run the following:~~
+just run the following:
 
 ``` common-lisp
 (ql:quickload :polisher)
