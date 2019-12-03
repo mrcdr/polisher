@@ -43,13 +43,7 @@ If you don't want to use it, the macro `polish` is available instead.
 
 ## Installation
 ### Quicklisp
-Currently, the bug fix at [46e644c](https://github.com/mrcdr/polisher/commit/46e644c6d0d253375d8113ffffd29ee82039eab9)
-hasn't been reflected on the Quicklisp official repository.
-So please use other installation ways bellow.
-Sorry for the inconvenience.
-
-
-~~If you already have [Quicklisp](https://www.quicklisp.org/beta/) client,
+If you already have [Quicklisp](https://www.quicklisp.org/beta/) client,
 just run the following:~~
 
 ``` common-lisp
