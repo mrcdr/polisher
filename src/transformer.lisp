@@ -62,7 +62,7 @@
                     (return index))))
 
 
-(defun parse-value-or-function (formula begin end)  
+(defun parse-value-or-function (formula begin end)
   (cond
     ((zerop (- end begin)) (error "Invalid formula"))
     ((= (- end begin) 1) (aref formula begin)) ;; symbol or value
@@ -82,9 +82,9 @@
                    (progn
                      (push (parse-formula formula buffer-begin i) children)
                      (setf buffer-begin (+ i 1)))))
-              
+
               ((eq token *left-paren*) (incf paren-depth))
-              
+
               ((eq token *right-paren*)
                (progn
                  (decf paren-depth)
@@ -95,5 +95,5 @@
                      (push (parse-formula formula buffer-begin i) children))
                    (return)))))
          finally (error "Unreachable point"))
-       (cons (aref formula 0) (reverse children))))
+       (cons (aref formula begin) (reverse children))))
     (t (error "Invalid formula"))))

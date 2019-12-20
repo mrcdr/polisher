@@ -37,15 +37,12 @@
 
 
 (defun tokenize (formula-str)
-  (let* ((signed-value-regex "^[+-]?[0-9]+(?:\\.[0-9]*)?(?:[dDeEfFlLsS][+-]?[0-9]+)?")
-         (unsigned-value-regex "^[0-9]+(?:\\.[0-9]*)?(?:[dDeEfFlLsS][+-]?[0-9]+)?")
-         (signed-double-quote-regex "^[+-]\".*?\"")
+  (let* ((unsigned-value-regex "^[0-9]+(?:\\.[0-9]*)?(?:[dDeEfFlLsS][+-]?[0-9]+)?")
          (unsigned-double-quote-regex "^\".*?\"")
          (operator-regex-tmp (create-operator-regex))
          (operator-regex (format nil "^(~a)" operator-regex-tmp))
          (separator-regex (format nil "~a|\\(|\\)|," operator-regex-tmp))
-         (signed-symbol-regex (format nil "^[+-](.+?)(?:~a|\\s|\\z)" separator-regex)) ;; \z is required to
-         (unsigned-symbol-regex (format nil "^(.+?)(?:~a|\\s|\\z)" separator-regex)))  ;; terminate non-greedy match
+         (unsigned-symbol-regex (format nil "^(.+?)(?:~a|\\s|\\z)" separator-regex)))  ;; \z is required to terminate non-greedy match
     (let ((tokenized nil))
       (loop with rest-str = formula-str
             with sign-allowed = t
@@ -61,32 +58,25 @@
                    (push read-form tokenized)
                    (setf rest-str (subseq rest-str position))
                    (setf sign-allowed nil)))
-                
-                ((and sign-allowed (match-length signed-value-regex rest-str))
+
+                ((and sign-allowed (match-length "^[+-]" rest-str))
+                 (declare (ignore it))
                  (progn
-                   (push (read-safely (subseq rest-str 0 it)) tokenized)
-                   (setf rest-str (subseq rest-str it))
+                   (when (char= (char rest-str 0) #\-)
+                     (push *left-paren* tokenized)
+                     (push -1 tokenized)
+                     (push *right-paren* tokenized)
+                     (push (symbol-to-operator '*) tokenized))
+                   (setf rest-str (subseq rest-str 1))
                    (setf sign-allowed nil)))
-                
+
                 ((match-length unsigned-value-regex rest-str)
                  (progn
                    (push (read-safely (subseq rest-str 0 it)) tokenized)
                    (setf rest-str (subseq rest-str it))
                    (setf sign-allowed nil)))
 
-                ((and sign-allowed (match-length signed-double-quote-regex rest-str))
-                 (progn
-                   (when (char= (char rest-str 0) #\-)
-                     ;; When double-quoted symbol with negative sign, insert "(-1)*"
-                     (push *left-paren* tokenized)
-                     (push -1 tokenized)
-                     (push *right-paren* tokenized)
-                     (push (symbol-to-operator '*) tokenized))
-                   (push (read-safely (subseq rest-str 2 (- it 1))) tokenized) ; remove sign and double quotes
-                   (setf rest-str (subseq rest-str it))
-                   (setf sign-allowed nil)))
-
-                ((and (match-length unsigned-double-quote-regex rest-str))
+                ((match-length unsigned-double-quote-regex rest-str)
                  (progn
                    (push (read-safely (subseq rest-str 1 (- it 1))) tokenized) ; remove double quotes
                    (setf rest-str (subseq rest-str it))
@@ -97,12 +87,12 @@
                  (declare (ignore it))
                  (error "Unmatched double quote"))
 
-                ((and (not sign-allowed) (match-length operator-regex rest-str 0))
+                ((match-length operator-regex rest-str 0)
                  (progn
                    (push (symbol-to-operator (read-from-string (subseq rest-str 0 it))) tokenized)
                    (setf rest-str (subseq rest-str it))
                    (setf sign-allowed nil)))
-                  
+
                 ((match-length "^\\(" rest-str)
                  (progn
                    (push *left-paren* tokenized)
@@ -114,31 +104,19 @@
                    (push *right-paren* tokenized)
                    (setf rest-str (subseq rest-str it))
                    (setf sign-allowed nil)))
-                
+
                 ((match-length "^," rest-str)
                  (progn
                    (push *separator* tokenized)
                    (setf rest-str (subseq rest-str it))
                    (setf sign-allowed t)))
-                
-                ((and sign-allowed (match-length signed-symbol-regex rest-str 0))
-                 (progn
-                   (when (char= (char rest-str 0) #\-)
-                     ;; When symbol with negative sign, insert "(-1)*"
-                     (push *left-paren* tokenized)
-                     (push -1 tokenized)
-                     (push *right-paren* tokenized)
-                     (push (symbol-to-operator '*) tokenized))
-                   (push (read-safely (subseq rest-str 1 (+ 1 it))) tokenized) ; skip sign
-                   (setf rest-str (subseq rest-str (+ 1 it)))
-                   (setf sign-allowed nil)))
-                
+
                 ((match-length unsigned-symbol-regex rest-str 0)
                  (progn
                    (push (read-safely (subseq rest-str 0 it)) tokenized)
                    (setf rest-str (subseq rest-str it))
                    (setf sign-allowed nil)))
-                
+
                 (t
                  (declare (ignore it))
                  (error "Invalid sytax"))))

@@ -29,7 +29,7 @@
   (is (tree-equal (polisher::tokenize "  2+ 3*  4") (map-op-object '(2 + 3 * 4)) :test #'equal))
   (is (tree-equal (polisher::tokenize "  2+ 3*  4    ") (map-op-object '(2 + 3 * 4)) :test #'equal))
   (is (tree-equal (polisher::tokenize "(2+3)*4") (map-op-object `(,*left-paren* 2 + 3 ,*right-paren* * 4)) :test #'equal))
-  (is (tree-equal (polisher::tokenize "-1") '(-1) :test #'equal))
+  (is (tree-equal (polisher::tokenize "-1") (map-op-object `(,*left-paren* -1 ,*right-paren* * 1 )) :test #'equal))
   (is (tree-equal (polisher::tokenize "sin(x)")
               (map-op-object `(sin ,*left-paren* x ,*right-paren*)) :test #'equal))
   (is (tree-equal (polisher::tokenize "  sin  ( x  )     ")
@@ -53,6 +53,20 @@
   (is (tree-equal (polisher::tokenize "\"*long-name-symbol*\"+2.5")
                   (map-op-object `(*long-name-symbol* + 2.5))
                   :test #'equal))
+  (is (tree-equal (polisher::tokenize "-     x + y")
+                  (map-op-object `(,*left-paren* -1 ,*right-paren* * x + y))
+                  :test #'equal))
+  (is (tree-equal (polisher::tokenize "sin(-     \"*x*\")")
+                  (map-op-object `(sin ,*left-paren* ,*left-paren* -1 ,*right-paren* * *x* ,*right-paren*))
+                  :test #'equal))
+  (is (tree-equal (polisher::tokenize "sin   (-
+   
+  \"*x*\")")
+                  (map-op-object `(sin ,*left-paren* ,*left-paren* -1 ,*right-paren* * *x* ,*right-paren*))
+                  :test #'equal))
+  (is (tree-equal (polisher::tokenize "-     3.14")
+                  (map-op-object `(,*left-paren* -1 ,*right-paren* * 3.14))
+                  :test #'equal))
   )
 
 (test transform-test
@@ -64,10 +78,19 @@
   (is (tree-equal (polisher::infix-to-sexp "1*2^3^4*5+6") '(+ (* (* 1 (expt 2 (expt 3 4))) 5) 6) :test #'equal))
   (is (tree-equal (polisher::infix-to-sexp "1+2*3?4*5") '(+ 1 (* (* 2 (mod 3 4)) 5)) :test #'equal))
   (is (tree-equal (polisher::infix-to-sexp "1e5+#C(2 4)") '(+ 1e5 #C(2 4)) :test #'equal))
+  (is (tree-equal (polisher::infix-to-sexp "1e+1+1") '(+ 1e+1 1) :test #'equal))
+  (is (tree-equal (polisher::infix-to-sexp "\"1e\"+1+1") '(+ (+ 1e 1) 1) :test #'equal))
   (is (tree-equal (polisher::infix-to-sexp "sin(#b1011 +5)") '(sin (+ #b1011 5)) :test #'equal)) ; space required
   (is (tree-equal (polisher::infix-to-sexp "\"two-returner\"()") '(two-returner)))
   (is (tree-equal (polisher::infix-to-sexp "\"two-returner\"") 'two-returner))
   )
+
+(test calculation-test
+  (is (= (let ((a 1)
+               (b 1)
+               (c -2))
+           (polisher::polish "(   -b+sqrt(b**2-4*a*c))/(2*a)"))
+         1)))
 
 (test invalid-formula-test
   (signals simple-error (polisher::infix-to-sexp ""))
