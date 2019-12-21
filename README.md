@@ -106,6 +106,21 @@ When you add your own operator, be careful of which package
 its symbol is interned in.
 
 ## Restrictions
+### Symbols start with numbers
+Symbols which start with numbers must be double-quoted.
+The following example shows the reason:
+``` common-lisp
+(let ((1e 2))
+  #i{1e+1+1})
+;=> 11.0
+
+(let ((1e 2))
+  #i{"1e"+1+1})
+;=> 4
+```
+
+No one defines such an odd symbol? _Remember the standard functions `1+` and `1-`!_
+
 ### Symbols with vertical bars
 Symbols whose symbol-name sandwiched in vertical bars (e.g. `|ab de|`) can't be used.
 This is because someone may want to use a vertical bar as the logical OR operator.
