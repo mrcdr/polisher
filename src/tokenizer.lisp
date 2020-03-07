@@ -14,12 +14,13 @@
 
 
 (defun match-length (regex target-string &optional group-index)
-  (multiple-value-bind (start end s-group e-group)
-      (cl-ppcre:scan regex target-string)
-    (when start
-      (if group-index
-          (- (aref e-group group-index) (aref s-group group-index))
-          (- end start)))))
+  (let ((scanner (cl-ppcre:create-scanner regex :case-insensitive-mode t)))
+    (multiple-value-bind (start end s-group e-group)
+        (cl-ppcre:scan scanner target-string)
+      (when start
+        (if group-index
+            (- (aref e-group group-index) (aref s-group group-index))
+            (- end start))))))
 
 
 (defun create-operator-regex ()
@@ -120,4 +121,4 @@
                 (t
                  (declare (ignore it))
                  (error "Invalid sytax"))))
-      (reverse tokenized))))
+      (nreverse tokenized))))

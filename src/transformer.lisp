@@ -95,5 +95,5 @@
                      (push (parse-formula formula buffer-begin i) children))
                    (return)))))
          finally (error "Unreachable point"))
-       (cons (aref formula begin) (reverse children))))
+       (cons (aref formula begin) (nreverse children))))
     (t (error "Invalid formula"))))
