@@ -3,8 +3,9 @@ language: minimal # Actual language is Common Lisp, but it's not supported.
 install:
   - sudo apt-get install sbcl
   - curl --no-progress-bar --retry 10 -o quicklisp.lisp -L http://beta.quicklisp.org/quicklisp.lisp
+  - mkdir -p quicklisp
   - |-
-    sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install :path #P"./")' --non-interactive
+    sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install :path #P"./quicklisp/")' --non-interactive
 
 script:
-  - sbcl --load quicklisp/setup.lisp --load test-script/test-runner.lisp
+  - sbcl --load quicklisp/setup.lisp --load test-script/test-runner.lisp --non-interactive
