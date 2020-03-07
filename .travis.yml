@@ -4,7 +4,8 @@ sudo: required
 install:
   - sudo apt-get install sbcl
   - curl --no-progress-bar --retry 10 -o quicklisp.lisp -L http://beta.quicklisp.org/quicklisp.lisp
-  - sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install :path #P"./")' --script /dev/null
+  - |-
+    sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install :path #P"./")' --script /dev/null
 
 script:
   - sbcl --load quicklisp/setup.lisp --load test-script/test-runner.lisp
