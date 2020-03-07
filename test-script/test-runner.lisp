@@ -1,3 +1,5 @@
 (push #p"./" asdf:*central-registry*)
 (ql:quickload :polisher.test)
-(uiop:quit (if (asdf:test-system :polisher) 0 1))
+(asdf:test-system :polisher)
+;; If the test failed, error wouldn't be handled
+;; and the process would exit with non-zero error code.
