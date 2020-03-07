@@ -1,4 +1,5 @@
-language: minimal # Actual language is Common Lisp, but it's not supported.
+language: shell # Actual language is Common Lisp, but it's not supported.
+os: linux
 
 install:
   - sudo apt-get install sbcl

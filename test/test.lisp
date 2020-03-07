@@ -104,6 +104,8 @@
   (signals simple-error (polisher::infix-to-sexp "1ee2+3"))
   (signals simple-error (polisher::infix-to-sexp "1+\"*gamma*\"*\"+euler-constant+")))
 
+(test intentional-failure
+  (is nil))
 
 (defun run-test ()
   (let ((*package* (find-package :polisher.test)))
