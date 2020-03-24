@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/mrcdr/polisher.svg?branch=master)](https://travis-ci.org/mrcdr/polisher.svg?branch=master)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)]()
+
 # Polisher
 Infix notation to S-expression (Polish notation) translator for Common Lisp
 
