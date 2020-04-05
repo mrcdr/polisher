@@ -1,7 +1,7 @@
 (in-package :polisher)
 
 
-;; From Paul Graham's "On Lisp"
+;;; From Paul Graham's "On Lisp"
 (defmacro acond (&rest clauses)
   (if (null clauses)
       nil
@@ -43,7 +43,7 @@
          (operator-regex-tmp (create-operator-regex))
          (operator-regex (format nil "^(~a)" operator-regex-tmp))
          (separator-regex (format nil "~a|\\(|\\)|," operator-regex-tmp))
-         (unsigned-symbol-regex (format nil "^(.+?)(?:~a|\\s|\\z)" separator-regex)))  ;; \z is required to terminate non-greedy match
+         (unsigned-symbol-regex (format nil "^(.+?)(?:~a|\\s|\\z)" separator-regex)))  ; \z is required to terminate non-greedy match
     (let ((tokenized nil))
       (loop with rest-str = formula-str
             with sign-allowed = t

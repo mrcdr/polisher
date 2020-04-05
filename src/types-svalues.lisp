@@ -2,10 +2,20 @@
 
 
 (defclass operator ()
-  ((symbol :initarg :symbol)
-   (function :initarg :function)
-   (priority :initarg :priority)
-   (left-associative :initarg :left-associative :initform t)))
+  ((symbol :initarg :symbol
+           :type 'symbol
+           :documentation "Symbol used in infix-style.")
+   (function :initarg :function
+             :documentation "Function to be called, which must receive exactly two arguments.")
+   (priority :initarg :priority
+             :type 'number
+             :documentation "Operator priority. Operators will be evaluated from ones having larger priority.")
+   (left-associative :initarg :left-associative
+                     :initform t
+                     :type 'boole
+                     :documentation "If t, this operator will be left associative (e.g. addition operator +).
+If nil, this operator will be right associative (e.g. power operator **)."))
+  (:documentation "Operator class, whose instance will usually be registered by polisher:add-operator function."))
 
 
 (defmethod initialize-instance :after
@@ -18,6 +28,15 @@
 
 (defmethod print-object ((this operator) stream)
   (format stream "op~a" (slot-value this 'symbol)))
+
+
+(defgeneric readable-string (object))
+(defmethod readable-string ((object operator))
+  (format nil "symbol: ~5a, function: ~10a, priority: ~3a, left-associative: ~a"
+          (slot-value object 'symbol)
+          (slot-value object 'function)
+          (slot-value object 'priority)
+          (slot-value object 'left-associative)))
 
 
 (defparameter *operator-list* nil)
@@ -33,6 +52,7 @@
 
 
 (defun add-operator (op)
+  "Add infix-style operator, which should be a polisher:operator instance."
   (unless (typep op 'operator)
     (error "Argument must be operator"))
   (unless (every #'(lambda (x)

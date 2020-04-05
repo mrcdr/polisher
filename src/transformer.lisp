@@ -65,9 +65,9 @@
 (defun parse-value-or-function (formula begin end)
   (cond
     ((zerop (- end begin)) (error "Invalid formula"))
-    ((= (- end begin) 1) (aref formula begin)) ;; symbol or value
+    ((= (- end begin) 1) (aref formula begin)) ; symbol or value
     ((and (symbolp (aref formula begin))
-          (eq (aref formula (+ begin 1)) *left-paren*)) ;; function
+          (eq (aref formula (+ begin 1)) *left-paren*)) ; function
      (let ((children nil))
        (loop
          for i from (+ begin 2) below end
