@@ -1,12 +1,16 @@
 language: shell # Actual language is Common Lisp, but it's not supported.
 os: linux
 
-install:
-  - sudo apt-get install sbcl
+jobs:
+  include:
+    - install:
+        - sudo apt-get install sbcl
+        - |-
+          sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install :path #P"./quicklisp/")' --non-interactive
+
+      script:
+        - sbcl --load quicklisp/setup.lisp --load test-script/test-runner.lisp --non-interactive
+
+before_install:
   - curl --no-progress-bar --retry 10 -o quicklisp.lisp -L http://beta.quicklisp.org/quicklisp.lisp
   - mkdir -p quicklisp
-  - |-
-    sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install :path #P"./quicklisp/")' --non-interactive
-
-script:
-  - sbcl --load quicklisp/setup.lisp --load test-script/test-runner.lisp --non-interactive
