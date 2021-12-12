@@ -1,0 +1,22 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install external programs
+      run: sudo apt-get install sbcl
+
+    - name: Prepare Quicklisp
+      run: |
+        curl --no-progress-bar --retry 10 -o quicklisp.lisp -L http://beta.quicklisp.org/quicklisp.lisp
+        mkdir -p quicklisp
+        sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install :path #P"./quicklisp/")' --non-interactive
+ 
+    - name: Test
+      run: sbcl --load quicklisp/setup.lisp --load test-script/test-runner.lisp --non-interactive
