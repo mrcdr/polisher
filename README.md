@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mrcdr/polisher.svg?branch=master)](https://travis-ci.org/mrcdr/polisher.svg?branch=master)
+[![CI](https://github.com/mrcdr/polisher/actions/workflows/ci.yml/badge.svg)](https://github.com/mrcdr/polisher/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)]()
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/mrcdr/polisher)]()
 
