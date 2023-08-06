@@ -37,12 +37,12 @@
     read))
 
 
-(defvar *parens* (cons "\\(" "\\)")
+(defparameter *parens* (cons "\\(" "\\)")
   "Defines a pair of regexes for the open and close parens in an infix macro usage")
-(defvar *escape-open-prefix-regex* "`"
+(defparameter *escape-open-prefix-regex* "`"
   "Defines the regex to identify the start of a lisp section.
 Must be succeeded by the starting open-paren of the lisp code itself.")
-(defvar *escape-open-regex* "."
+(defparameter *escape-open-regex* "."
   "Defines the bounds for the actual start-char of a lisp section")
 
 (defun tokenize (formula-str)

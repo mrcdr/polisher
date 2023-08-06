@@ -22,7 +22,7 @@ evaluated as usual lisp form."
           'string))
 
 
-(defvar *infix-macro-boundary-chars* (cons #\{ #\})
+(defparameter *infix-macro-boundary-chars* (cons #\{ #\})
   "The start and end chars for the contents of an infix macro usage")
 
 
