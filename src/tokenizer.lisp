@@ -43,7 +43,7 @@
   "Defines the regex to identify the start of a lisp section.
 Must be succeeded by the starting open-paren of the lisp code itself.")
 (defparameter *escape-open-regex* "."
-  "Defines the bounds for the actual start-char of a lisp section")
+  "Defines the bounds for the actual start of a lisp section")
 
 (defun tokenize (formula-str)
   (let* ((unsigned-value-regex "^[0-9]+(?:\\.[0-9]*)?(?:[dDeEfFlLsS][+-]?[0-9]+)?")
@@ -107,14 +107,12 @@ Must be succeeded by the starting open-paren of the lisp code itself.")
 
                   ((match-length (concatenate 'string "^" (car *parens*)) rest-str)
                    (progn
-                   (print "open-paren")
                      (push *left-paren* tokenized)
                      (setf rest-str (subseq rest-str it))
                      (setf sign-allowed t)))
 
                   ((match-length (concatenate 'string "^" (cdr *parens*)) rest-str)
                    (progn
-                   (print "close-paren")
                      (push *right-paren* tokenized)
                      (setf rest-str (subseq rest-str it))
                      (setf sign-allowed nil)))
