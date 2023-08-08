@@ -11,12 +11,18 @@
       (if (zerop (- end begin 2))
           (error "Invalid paren")
           (parse-formula formula (+ begin 1) (- end 1)))
-      (let ((div-index (find-split-point formula begin end)))
+      (multiple-value-bind (div-index div-args) (find-split-point formula begin end)
         (if (< div-index 0) ;; formula contains no operators
             (parse-value-or-function formula begin end)
-            (list (slot-value (aref formula div-index) 'function)
-                  (parse-formula formula begin div-index)
-                  (parse-formula formula (+ div-index 1) end))))))
+            (let* ((func (slot-value (aref formula div-index) 'function))
+                   (before (parse-formula formula begin div-index))
+                   (after-idx (+ div-index 1))
+                   (after (when (> end after-idx)
+                            (multiple-value-list
+                             (parse-formula formula after-idx end)))))
+              (or (null div-args)
+                  (assert (= (1+ (length after)) div-args)))
+              (list* func before after))))))
 
 
 (defun should-be-peeled (formula begin end)
@@ -41,6 +47,7 @@
         for token = (aref formula i)
         with max-priority = (+ *max-priority* 1)
         with index = -1
+        with args = 2
         with paren-depth = 0
         do (cond
              ((eq token *left-paren*) (incf paren-depth))
@@ -55,11 +62,12 @@
                             (<= (slot-value token 'priority) max-priority))
                        (and (not (slot-value token 'left-associative))
                             (< (slot-value token 'priority) max-priority))))
-                (setf max-priority (slot-value token 'priority))
-                (setf index i)))
+              (setf max-priority (slot-value token 'priority))
+              (setf index i)
+              (setf args (slot-value token 'args))))
         finally (if (> paren-depth 0)
                     (error "Unmatched paren")
-                    (return index))))
+                    (return (values index args)))))
 
 
 (defun parse-value-or-function (formula begin end)
@@ -96,4 +104,4 @@
                    (return)))))
          finally (error "Unreachable point"))
        (cons (aref formula begin) (nreverse children))))
-    (t (error "Invalid formula"))))
+    (t (values-list (loop for i from begin below end collect (aref formula i))))))

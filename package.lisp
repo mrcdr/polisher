@@ -1,7 +1,6 @@
 (defpackage polisher
   (:use :cl)
   (:export :polish
-           :add-operator
            :operator
-           :activate-infix-syntax
-           :list-operators))
+           :add-operator :list-operators :*operator-list*
+           :activate-infix-syntax))

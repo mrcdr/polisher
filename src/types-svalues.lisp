@@ -14,7 +14,12 @@
                      :initform t
                      :type 'boole
                      :documentation "If t, this operator will be left associative (e.g. addition operator +).
-If nil, this operator will be right associative (e.g. power operator **)."))
+If nil, this operator will be right associative (e.g. power operator **).")
+   (args :initarg :args
+         :initform 2
+         :type 'number
+         :documentation "This determines how many input values are expected by the operator.
+The first arg goes before the operator and the rest after, as in languages like Haskell."))
   (:documentation "Operator class, whose instance will usually be registered by polisher:add-operator function."))
 
 
@@ -32,11 +37,12 @@ If nil, this operator will be right associative (e.g. power operator **)."))
 
 (defgeneric readable-string (object))
 (defmethod readable-string ((object operator))
-  (format nil "symbol: ~5a, function: ~10a, priority: ~3a, left-associative: ~a"
+  (format nil "symbol: ~5a, function: ~10a, priority: ~3a, left-associative: ~a, arg-count: ~a"
           (slot-value object 'symbol)
           (slot-value object 'function)
           (slot-value object 'priority)
-          (slot-value object 'left-associative)))
+          (slot-value object 'left-associative)
+          (slot-value object 'args)))
 
 
 (defparameter *operator-list* nil)
@@ -77,10 +83,10 @@ If nil, this operator will be right associative (e.g. power operator **)."))
 (add-operator (make-instance 'operator :symbol '* :priority 2))
 (add-operator (make-instance 'operator :symbol '/ :priority 2))
 (add-operator (make-instance 'operator :symbol '** :function 'expt :priority 3 :left-associative nil))
-; Here used a little trick; the symbol ** is interned in CL package as a previously evaluated result.
+;; Here used a little trick; the symbol ** is interned in CL package as a previously evaluated result.
 
-; (add-operator (make-instance 'operator :symbol '^ :function 'expt :priority 3 :left-associative nil))
-; To enable this, symbol ^ must be exported by package definition.
+;; (add-operator (make-instance 'operator :symbol '^ :function 'expt :priority 3 :left-associative nil))
+;; To enable this, symbol ^ must be exported by package definition.
 
 
 (defun symbol-to-operator (symbol)

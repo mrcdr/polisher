@@ -16,13 +16,18 @@ evaluated as usual lisp form."
 ;;; Reader macro
 (defun read-formula (stream end-char)
   (coerce (loop for c = (read-char stream)
-                if (char= c end-char) do (loop-finish)
+                if (char= c end-char)
+                  do (loop-finish)
                 collect c)
           'string))
 
 
+(defparameter *infix-macro-boundary-chars* (cons #\{ #\})
+  "The start and end chars for the contents of an infix macro usage")
+
+
 (defun activate-infix-syntax (&optional (activate t) (dispatch-char #\i))
-    "Activate infix reader-macro #i{...} by default. If the argument \"activate\" is nil,
+  "Activate infix reader-macro #i{...} by default. If the argument \"activate\" is nil,
 deactivate (unregister) #i macro (regardless of whether or not it has been registered by this function).
 The macro character \"i\" can be changed by the argument \"dispatch-char\"."
   (if activate
@@ -33,9 +38,11 @@ The macro character \"i\" can be changed by the argument \"dispatch-char\"."
                                       #'(lambda (stream disp-char sub-char)
                                           (declare (ignore disp-char sub-char))
                                           (let ((first-char (read-char stream)))
-                                            (when (char/= first-char #\{)
+                                            (when (char/= first-char
+                                                          (car *infix-macro-boundary-chars*))
                                               (error "Infix syntax must be like #i{...}"))
-                                            (infix-to-sexp (read-formula stream #\}))))))
+                                            (infix-to-sexp (read-formula stream
+                                                                         (cdr *infix-macro-boundary-chars*)))))))
       (set-dispatch-macro-character #\# dispatch-char nil)))
 
 

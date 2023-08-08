@@ -103,6 +103,48 @@ For example, when `op1` is left-associative and `op2` is right-associative,
 When you add your own operator, be careful of which package
 its symbol is interned in.
 
+### Usage example
+
+By taking advantage of the ability to define custom operators, you can design a syntax for extremely concise expressions of those operations, while seamlessly integrating those expressions with Common Lisp code.
+
+Setup:
+
+``` common-lisp
+(polisher:activate-infix-syntax)
+;;; Create a filtering function that takes the sequence first
+(defun reverse-filter (seq op)
+  (if (sequencep seq)
+    (remove-if-not op seq)
+    (and (funcall op seq) seq)))
+;;; Create a mapping function that takes the sequence first
+(defun reverse-map (seq op)
+  (if (sequencep seq)
+    (cl:map (if (listp seq) 'list 'vector) op seq)
+    (funcall op seq)))
+
+(polisher:add-operator (make-instance 'polisher:operator :symbol '~ :function 'not :priority 10 :args 1)) ;;Note: this is a *postfix* `not` operator
+(polisher:add-operator (make-instance 'polisher:operator :symbol '& :function 'and :priority 0))
+(polisher:add-operator (make-instance 'polisher:operator :symbol '== :function 'equal :priority -2 :left-associative t))
+
+(polisher:add-operator (make-instance 'polisher:operator :symbol '@ :function 'elt :priority 10))
+(polisher:add-operator (make-instance 'polisher:operator :symbol '? :function 'reverse-filter :priority -1 :left-associative t))
+(polisher:add-operator (make-instance 'polisher:operator :symbol '=> :function 'reverse-map :priority -1 :left-associative t))
+
+```
+
+Usage:
+
+``` common-lisp
+#i{(`(list 1 2 3 4 5)=>#'1+ ?#'evenp)}
+;;; => (2 4 6)
+#i{3&(`(list 1 2 3 4 5)=>#'1+ ?#'oddp)~==nil}
+;;; => t
+(unless #i{t&30&`(emptyp (polish "#(1 2 3 4 5)=>#'1+ ?#'oddp"))} 
+  "See what I mean?")
+;;; => "See what I mean?"
+```
+
+
 ## Restrictions
 ### Symbols start with numbers
 Symbols which start with numbers must be double-quoted.
@@ -130,6 +172,8 @@ However in my opinion, the formula seems very weird when it appears in ALGOL-lik
 so I think double-quoting should be used.
 In addition, many text editors highlight double-quoted things, helping us to distinguish
 symbol-names from operators.
+
+
 
 ## License
 [MIT](https://github.com/mrcdr/polisher/blob/master/LICENSE)
