@@ -9,5 +9,5 @@
                (:module "test"
                 :serial t
                 :components ((:file "test"))))
-  :perform (test-op (o c)
-             (symbol-call :polisher.test :run-test)))
+  :perform (asdf:test-op (o c)
+             (uiop:symbol-call :parachute :test :polisher.test)))

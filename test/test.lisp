@@ -96,8 +96,6 @@
   (fail (polisher::infix-to-sexp "1ee2+3"))
   (fail (polisher::infix-to-sexp "1+\"*gamma*\"*\"+euler-constant+")))
 
-(defun run-test ()
-  (test (package-tests :polisher.test)))
 
 (defun run-test-interactive ()
   (test (package-tests :polisher.test) :report 'interactive))

@@ -13,4 +13,4 @@
                              (:file "tokenizer")
                              (:file "transformer")
                              (:file "interface"))))
-  :in-order-to ((test-op (test-op polisher.test))))
+  :in-order-to ((asdf:test-op (asdf:test-op polisher.test))))
