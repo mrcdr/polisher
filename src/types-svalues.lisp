@@ -3,21 +3,24 @@
 
 (defclass operator ()
   ((symbol :initarg :symbol
-           :type 'symbol
+           :type symbol
            :documentation "Symbol used in infix-style.")
    (function :initarg :function
+             :reader implementation-of
              :documentation "Function to be called, which must receive exactly two arguments.")
    (priority :initarg :priority
-             :type 'number
+             :type number
+             :reader priority-of
              :documentation "Operator priority. Operators will be evaluated from ones having larger priority.")
    (left-associative :initarg :left-associative
                      :initform t
-                     :type 'boole
+                     :reader is-left-associative
+                     :type bool
                      :documentation "If t, this operator will be left associative (e.g. addition operator +).
 If nil, this operator will be right associative (e.g. power operator **).")
    (args :initarg :args
          :initform 2
-         :type 'number
+         :type number
          :documentation "This determines how many input values are expected by the operator.
 The first arg goes before the operator and the rest after, as in languages like Haskell."))
   (:documentation "Operator class, whose instance will usually be registered by polisher:add-operator function."))
