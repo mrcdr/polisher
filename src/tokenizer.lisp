@@ -132,7 +132,7 @@ Must be succeeded by the starting open-paren of the lisp code itself.")
                      (multiple-value-bind (contents len) (read-from-string rest-str)
                        (push contents tokenized)
                        (setf rest-str (subseq rest-str len)))
-                     (setf sign-allowed t)))
+                     (setf sign-allowed nil)))
 
                   ((match-length unsigned-symbol-regex rest-str 0)
                    (progn
