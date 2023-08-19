@@ -50,7 +50,7 @@ If you don't want to use it, the macro `polish` is available instead.
 If you already have [Quicklisp](https://www.quicklisp.org/beta/) client,
 just run the following:
 
-``` common-lisp
+```common-lisp
 (ql:quickload :polisher)
 ```
 
@@ -109,37 +109,33 @@ By taking advantage of the ability to define custom operators, you can design a 
 
 Setup:
 
-``` common-lisp
+```common-lisp
 (polisher:activate-infix-syntax)
 ;;; Create a filtering function that takes the sequence first
-(defun reverse-filter (seq op)
-  (if (sequencep seq)
-    (remove-if-not op seq)
-    (and (funcall op seq) seq)))
+(defun drop-if (seq op)
+  (remove-if-not op seq))
 ;;; Create a mapping function that takes the sequence first
-(defun reverse-map (seq op)
-  (if (sequencep seq)
-    (cl:map (if (listp seq) 'list 'vector) op seq)
-    (funcall op seq)))
+(defun map-by (seq op)
+  (map (if (listp seq) 'list 'vector) op seq))
 
-(polisher:add-operator (make-instance 'polisher:operator :symbol '~ :function 'not :priority 10 :args 1)) ;;Note: this is a *postfix* `not` operator
+(polisher:add-operator (make-instance 'polisher:operator :symbol '~ :function 'not :priority 10 :args 1)) ;;Note: this is a *prefix* `not` operator
 (polisher:add-operator (make-instance 'polisher:operator :symbol '& :function 'and :priority 0))
 (polisher:add-operator (make-instance 'polisher:operator :symbol '== :function 'equal :priority -2 :left-associative t))
 
 (polisher:add-operator (make-instance 'polisher:operator :symbol '@ :function 'elt :priority 10))
-(polisher:add-operator (make-instance 'polisher:operator :symbol '? :function 'reverse-filter :priority -1 :left-associative t))
-(polisher:add-operator (make-instance 'polisher:operator :symbol '=> :function 'reverse-map :priority -1 :left-associative t))
+(polisher:add-operator (make-instance 'polisher:operator :symbol '? :function 'drop-if :priority -1 :left-associative t))
+(polisher:add-operator (make-instance 'polisher:operator :symbol '=> :function 'map-by :priority -1 :left-associative t))
 
 ```
 
 Usage:
 
-``` common-lisp
-#i{(`(list 1 2 3 4 5)=>#'1+ ?#'evenp)}
+```common-lisp
+#i{(`(list 1 2 3 4 5) => #'1+ ? #'evenp)}
 ;;; => (2 4 6)
-#i{3&(`(list 1 2 3 4 5)=>#'1+ ?#'oddp)~==nil}
+#i{3 & ~(`(list 1 2 3 4 5) => #'1+ ?#'oddp) == nil}
 ;;; => t
-(unless #i{t&30&`(emptyp (polish "#(1 2 3 4 5)=>#'1+ ?#'oddp"))} 
+(unless #i{t & 30 & `(null (polish "#(1 2 3 4 5) => #'1+ ? #'oddp"))}
   "See what I mean?")
 ;;; => "See what I mean?"
 ```
@@ -149,7 +145,7 @@ Usage:
 ### Symbols start with numbers
 Symbols which start with numbers must be double-quoted.
 The following example shows the reason:
-``` common-lisp
+```common-lisp
 (let ((1e 2))
   #i{1e+1+1})
 ;=> 11.0
