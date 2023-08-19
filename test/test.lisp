@@ -20,6 +20,8 @@
   (tree-equal a b :test #'equal))
 
 (add-operator (make-instance 'operator :symbol '^ :function 'expt :priority 3 :left-associative nil))
+(add-operator (make-instance 'operator :symbol '& :function 'and :priority 2))
+(add-operator (make-instance 'operator :symbol '~ :function 'not :priority 4 :args 1))
 (add-operator (make-instance 'operator :symbol '? :function 'mod :priority 10000))
 
 (define-test "tokenize"
@@ -61,6 +63,9 @@
                   (map-op-object `(,*left-paren* -1 ,*right-paren* * 3.14)))
   )
 
+(define-test "tokenize with lisp expression"
+  (is tree-exact-equal (polisher::tokenize "1 + `(list 1 2 3)") (map-op-object '(1 + (list 1 2 3)))))
+
 (define-test "transform"
   (is tree-exact-equal (polisher::infix-to-sexp "1+1") '(+ 1 1))
   (is tree-exact-equal (polisher::infix-to-sexp "(1+(1))") '(+ 1 1))
@@ -71,11 +76,15 @@
   (is tree-exact-equal (polisher::infix-to-sexp "1+2*3?4*5") '(+ 1 (* (* 2 (mod 3 4)) 5)))
   (is tree-exact-equal (polisher::infix-to-sexp "1e5+#C(2 4)") '(+ 1e5 #C(2 4)))
   (is tree-exact-equal (polisher::infix-to-sexp "1e+1+1") '(+ 1e+1 1))
+  (is tree-exact-equal (polisher::infix-to-sexp "~(~a&~b)") '(not (and (not a) (not b))))
   (is tree-exact-equal (polisher::infix-to-sexp "\"1e\"+1+1") '(+ (+ 1e 1) 1))
   (is tree-exact-equal (polisher::infix-to-sexp "sin(#b1011 +5)") '(sin (+ #b1011 5))) ; space required
   (is tree-exact-equal (polisher::infix-to-sexp "\"two-returner\"()") '(two-returner))
   (is tree-exact-equal (polisher::infix-to-sexp "\"two-returner\"") 'two-returner)
   )
+
+(define-test "transform with lisp expression"
+  (is tree-exact-equal (polisher::infix-to-sexp "1 + `(expt 2 3) ^ 4") '(+ 1 (expt (expt 2 3) 4))))
 
 (define-test "Typical formula"
   (is = (let ((a 1)
